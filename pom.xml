@@ -69,7 +69,7 @@
 
         <!-- Spring -->
         <spring.version>4.3.24.RELEASE</spring.version>
-        <spring-security.version>5.2.10.RELEASE</spring-security.version>
+        <spring-security.version>5.2.11.RELEASE</spring-security.version>
 
         <jsoup.version>1.12.1</jsoup.version>
         <rome.version>1.15.0</rome.version>
