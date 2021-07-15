@@ -20,6 +20,11 @@ import static org.springframework.web.util.UriComponentsBuilder.fromUriString;
 @SuppressWarnings("SpringAutowiredFieldsWarningInspection")
 public class ModelServiceComponentPresentationProvider extends BrokerComponentPresentationProvider implements ComponentPresentationProvider {
 
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+    static {
+        OBJECT_MAPPER.findAndRegisterModules();
+    }
+
     @Resource
     private ModelServiceClient modelServiceClient;
 
@@ -42,7 +47,7 @@ public class ModelServiceComponentPresentationProvider extends BrokerComponentPr
 
         try {
             String cpContent = modelServiceClient.getForType(serviceUrl, String.class, "tcm", publicationId, componentId, templateId);
-            JsonNode cp = new ObjectMapper().readTree(cpContent);
+            JsonNode cp = OBJECT_MAPPER.readTree(cpContent);
             return new ComponentPresentationImpl(
                     cp.get("NamespaceId").asInt(0),
                     cp.get("PublicationId").asInt(publicationId),

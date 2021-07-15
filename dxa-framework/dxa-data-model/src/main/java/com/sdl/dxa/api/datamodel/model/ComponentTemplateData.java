@@ -6,7 +6,7 @@ import com.sdl.dxa.api.datamodel.Constants;
 import org.joda.time.DateTime;
 
 @JsonTypeName
-public class ComponentTemplateData {
+public class ComponentTemplateData implements JsonPojo {
     public ComponentTemplateData() {
     }
 

@@ -11,7 +11,7 @@ import org.joda.time.DateTime;
 @Data
 @Accessors(chain = true)
 @JsonTypeName
-public class PageTemplateData {
+public class PageTemplateData implements JsonPojo {
 
     private String id;
 

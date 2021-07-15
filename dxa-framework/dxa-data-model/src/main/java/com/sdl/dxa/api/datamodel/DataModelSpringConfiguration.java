@@ -3,12 +3,13 @@ package com.sdl.dxa.api.datamodel;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.dxa.api.datamodel.json.Polymorphic;
 import com.sdl.dxa.api.datamodel.json.PolymorphicObjectMixin;
+import com.sdl.dxa.api.datamodel.model.JsonPojo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -32,7 +33,8 @@ public class DataModelSpringConfiguration {
     public ObjectMapper dxaR2ObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
+        objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategies.UpperCamelCaseStrategy());
+        objectMapper.findAndRegisterModules();
         objectMapper.registerModule(new JodaModule());
         objectMapper.setDateFormat(new StdDateFormat());
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -46,11 +48,12 @@ public class DataModelSpringConfiguration {
                     try {
                         Class<?> aClass = forName(type.getBeanClassName(), getDefaultClassLoader());
                         objectMapper.addMixIn(aClass, PolymorphicObjectMixin.class);
-                    } catch (ClassNotFoundException e) {
+                    } catch (ReflectiveOperationException e) {
                         log.warn("Class not found while mapping model data to typeIDs. Should never happen.", e);
                     }
                 });
         objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);
+        objectMapper.addMixIn(JsonPojo.class, PolymorphicObjectMixin.class);
 
         return objectMapper;
     }

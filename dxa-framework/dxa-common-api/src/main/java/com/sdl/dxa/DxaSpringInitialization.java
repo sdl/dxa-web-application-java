@@ -1,17 +1,26 @@
 package com.sdl.dxa;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.Version;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.cfg.MapperConfig;
+import com.fasterxml.jackson.databind.introspect.BasicBeanDescription;
+import com.fasterxml.jackson.databind.introspect.BasicClassIntrospector;
+import com.fasterxml.jackson.databind.introspect.ClassIntrospector;
 import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
+import com.fasterxml.jackson.databind.type.SimpleType;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.json.Polymorphic;
 import com.sdl.dxa.api.datamodel.json.PolymorphicObjectMixin;
+import com.sdl.dxa.api.datamodel.model.JsonPojo;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -35,6 +44,7 @@ import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import static com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter.FILTER_NAME;
 import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitialization;
@@ -166,28 +176,58 @@ public class DxaSpringInitialization {
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
+        ObjectMapper objectMapper = new ObjectMapper() {
+            // this is working replacements for Jackson 2.11 and later as
+            // mixins do not work anymore for standard java classes (includes Object.class)
+            protected ClassIntrospector defaultClassIntrospector() {
+                return new BasicClassIntrospector() {
+                    @Override
+                    public BasicBeanDescription forClassAnnotations(MapperConfig<?> config,
+                                                                    JavaType type,
+                                                                    MixInResolver r) {
 
+                        if (!type.equals(SimpleType.constructUnsafe(Object.class))) {
+                            return super.forClassAnnotations(config, type, r);
+                        }
+                        return BasicBeanDescription.forOtherUse(config,
+                                type,
+                                _resolveAnnotatedClass(config, type, r));
+                    }
+                };
+            }
+        };
+
+        objectMapper.findAndRegisterModules();
         objectMapper.registerModule(new JodaModule());
         objectMapper.setFilterProvider(jsonFilterProvider());
         objectMapper.setDateFormat(new StdDateFormat());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
+        objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategies.UpperCamelCaseStrategy());
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         objectMapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
 
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(Polymorphic.class));
         scanner.findCandidateComponents(DataModelSpringConfiguration.class.getPackage().getName())
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(type -> type.getBeanClassName() != null)
                 .forEach(type -> {
                     try {
                         Class<?> aClass = forName(type.getBeanClassName(), getDefaultClassLoader());
                         objectMapper.addMixIn(aClass, PolymorphicObjectMixin.class);
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException("Class not found while mapping model data to typeIDs. Should never happen.", e);
+                    } catch (ReflectiveOperationException e) {
+                        throw new RuntimeException("Class not found while mapping model data to typeIDs.", e);
                     }
                 });
+
+        // this is not working for Jackson 2.11
+        // (see the link https://github.com/FasterXML/jackson-databind/blob/
+        // 9cfcf8da7e94fa37c814ac8f38a50c80951726ee/src/main/
+        // java/com/fasterxml/jackson/databind/introspect/BasicClassIntrospector.java#L218)
         objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);
+        // so there is substitute for that case
+        objectMapper.addMixIn(JsonPojo.class, PolymorphicObjectMixin.class);
         traceBeanInitialization(objectMapper);
         return objectMapper;
     }

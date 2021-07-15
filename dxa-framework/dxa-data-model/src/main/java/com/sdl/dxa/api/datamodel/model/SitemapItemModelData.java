@@ -29,7 +29,7 @@ import java.util.TreeSet;
 @Accessors(chain = true)
 @JsonTypeName
 @Polymorphic
-public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
+public class SitemapItemModelData implements Comparable<SitemapItemModelData>, JsonPojo {
 
     @JsonProperty("Id")
     private String id;

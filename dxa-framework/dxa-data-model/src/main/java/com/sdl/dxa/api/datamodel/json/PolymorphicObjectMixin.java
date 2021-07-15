@@ -15,7 +15,10 @@ import static com.sdl.dxa.api.datamodel.Constants.DOLLAR_TYPE;
 @SuppressWarnings("unused")
 @JsonTypeResolver(ModelDataTypeResolver.class)
 @JsonTypeIdResolver(ModelDataTypeIdResolver.class)
-@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM, include = JsonTypeInfo.As.PROPERTY, property = DOLLAR_TYPE, visible = true)
+@JsonTypeInfo(use = JsonTypeInfo.Id.CUSTOM,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = DOLLAR_TYPE,
+        visible = true)
 public interface PolymorphicObjectMixin {
 
 }

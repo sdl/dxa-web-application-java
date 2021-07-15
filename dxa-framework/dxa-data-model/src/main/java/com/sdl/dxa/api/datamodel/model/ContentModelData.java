@@ -18,7 +18,7 @@ import static com.sdl.dxa.api.datamodel.Constants.DOLLAR_TYPE;
  */
 @JsonTypeName
 public class ContentModelData extends HashMap<String, Object>
-        implements Map<String, Object>, CanGetAndCast<String>, CanWrapContentAndMetadata {
+        implements Map<String, Object>, CanGetAndCast<String>, CanWrapContentAndMetadata, JsonPojo {
 
     //region Constructors matching super and copy-constructor
     public ContentModelData(int initialCapacity, float loadFactor) {

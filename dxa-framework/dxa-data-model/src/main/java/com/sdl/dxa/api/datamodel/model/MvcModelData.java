@@ -16,7 +16,7 @@ import java.util.Map;
 @Getter
 @Setter
 @EqualsAndHashCode
-public class MvcModelData {
+public class MvcModelData implements JsonPojo {
 
     private String actionName;
 

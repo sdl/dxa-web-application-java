@@ -10,7 +10,7 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @JsonTypeName
-public class TaxonomyNodeModelData extends SitemapItemModelData {
+public class TaxonomyNodeModelData extends SitemapItemModelData implements JsonPojo {
 
     @JsonProperty("Key")
     private String key;

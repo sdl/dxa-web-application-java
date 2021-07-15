@@ -27,6 +27,11 @@ import static com.sdl.webapp.common.impl.localization.semantics.SemanticsConvert
  */
 @Slf4j
 public class DocsLocalization implements Localization {
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
+
+    static {
+        OBJECT_MAPPER.findAndRegisterModules();
+    }
 
     /**
      * The Id for the current publication.
@@ -137,9 +142,8 @@ public class DocsLocalization implements Localization {
     }
 
     private <T> T getJsonObject(String path, TypeReference<T> resultType) throws IOException {
-        ObjectMapper objectMapper = new ObjectMapper();
         InputStream in = getClass().getClassLoader().getResourceAsStream(path);
-        return objectMapper.readValue(in, resultType);
+        return OBJECT_MAPPER.readValue(in, resultType);
     }
 
     /**

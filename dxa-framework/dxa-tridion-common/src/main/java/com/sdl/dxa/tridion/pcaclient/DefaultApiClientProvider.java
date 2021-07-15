@@ -38,17 +38,17 @@ import static com.tridion.ambientdata.AmbientDataConfig.getAmbientDataConfig;
 @Profile("!cil.providers.active")
 public class DefaultApiClientProvider implements ApiClientProvider {
 
-    private ApiClientConfigurationLoader configurationLoader;
-
-    private Authentication auth;
-
     private static final String X_PREVIEW_SESSION_TOKEN = "x-preview-session-token";
-
     private static final String PREVIEW_SESSION_TOKEN = "preview-session-token";
+    private static ObjectMapper OBJECT_MAPPER = new ObjectMapper();
 
+    static {
+        OBJECT_MAPPER.findAndRegisterModules();
+    }
+
+    private ApiClientConfigurationLoader configurationLoader;
+    private Authentication auth;
     private Map<String, ClaimValue> globalClaims = new ConcurrentHashMap<>();
-
-    private ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
     public DefaultApiClientProvider(ApiClientConfigurationLoader configurationLoader,
@@ -145,7 +145,7 @@ public class DefaultApiClientProvider implements ApiClientProvider {
             value.setType(ClaimValueType.STRING);
             value.setUri(claim.getKey().toString());
             try {
-                String jsonValue = mapper.writeValueAsString(claim.getValue());
+                String jsonValue = OBJECT_MAPPER.writeValueAsString(claim.getValue());
                 value.setValue(jsonValue);
             } catch (JsonProcessingException e) {
                 throw new ApiClientConfigurationException("Unable to serialize claim " + claim.getKey().toString(), e);

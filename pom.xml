@@ -46,7 +46,7 @@
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>
 
-        <jackson.version>2.10.5</jackson.version>
+        <jackson.version>2.12.3</jackson.version>
         <lombok.version>1.18.16</lombok.version>
 
         <!-- Logging -->
@@ -644,6 +644,11 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.dataformat</groupId>
                 <artifactId>jackson-dataformat-xml</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>

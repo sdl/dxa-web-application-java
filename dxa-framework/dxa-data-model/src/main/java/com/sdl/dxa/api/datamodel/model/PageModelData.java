@@ -20,7 +20,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Accessors(chain = true)
 @ToString(callSuper = true)
-public class PageModelData extends ViewModelData {
+public class PageModelData extends ViewModelData implements JsonPojo {
 
     private String id;
 

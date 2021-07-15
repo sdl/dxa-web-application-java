@@ -21,7 +21,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
-public class EntityModelData extends ViewModelData implements CanWrapContentAndMetadata {
+public class EntityModelData extends ViewModelData implements CanWrapContentAndMetadata, JsonPojo {
 
     private String id;
 

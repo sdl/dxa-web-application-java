@@ -17,7 +17,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @Accessors(chain = true)
-public class RichTextData implements DelegatesToList<Object>, CanGetAndCast<Integer> {
+public class RichTextData implements DelegatesToList<Object>, CanGetAndCast<Integer>, JsonPojo {
 
     private List<Object> fragments;
 

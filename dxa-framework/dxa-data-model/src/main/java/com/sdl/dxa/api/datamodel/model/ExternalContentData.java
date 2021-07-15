@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.base.Objects;
 
 @JsonTypeName
-public class ExternalContentData {
+public class ExternalContentData implements JsonPojo {
     public ExternalContentData() {
     }
 

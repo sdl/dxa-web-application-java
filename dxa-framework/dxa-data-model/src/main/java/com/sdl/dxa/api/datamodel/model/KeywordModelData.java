@@ -17,7 +17,7 @@ import lombok.experimental.Accessors;
 @NoArgsConstructor
 @Accessors(chain = true)
 @ToString(callSuper = true)
-public class KeywordModelData extends ViewModelData {
+public class KeywordModelData extends ViewModelData implements JsonPojo {
 
     private String id;
 

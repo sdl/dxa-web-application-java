@@ -3,13 +3,14 @@ package com.sdl.dxa.api.datamodel.model.unknown;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.google.common.base.Objects;
+import com.sdl.dxa.api.datamodel.model.JsonPojo;
 
 /**
  * Handler of any unknown entity-level class. Basically represents any data of a class that is not known with a JSON string as it is.
  */
 @JsonDeserialize(using = UnknownModelDataDeserializer.class)
 @JsonSerialize(using = UnknownModelDataSerializer.class)
-public class UnknownModelData {
+public class UnknownModelData implements JsonPojo {
     public UnknownModelData(String content) {
         this.content = content;
     }

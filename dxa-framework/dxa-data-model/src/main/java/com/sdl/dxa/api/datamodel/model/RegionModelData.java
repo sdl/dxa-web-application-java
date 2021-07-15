@@ -19,7 +19,7 @@ import java.util.Map;
 @Accessors(chain = true)
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeName
-public class RegionModelData extends ViewModelData {
+public class RegionModelData extends ViewModelData implements JsonPojo {
 
     private String name;
 

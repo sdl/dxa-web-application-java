@@ -21,7 +21,8 @@ import java.util.Map;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public abstract class ViewModelData implements CanCopyValues<ViewModelData>, CanWrapContentAndMetadata {
+public abstract class ViewModelData
+        implements CanCopyValues<ViewModelData>, CanWrapContentAndMetadata, JsonPojo {
 
     private String schemaId;
 

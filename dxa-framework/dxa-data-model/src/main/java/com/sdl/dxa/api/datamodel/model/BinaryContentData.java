@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.base.Objects;
 
 @JsonTypeName
-public class BinaryContentData {
+public class BinaryContentData implements JsonPojo {
     public BinaryContentData() {
     }
 

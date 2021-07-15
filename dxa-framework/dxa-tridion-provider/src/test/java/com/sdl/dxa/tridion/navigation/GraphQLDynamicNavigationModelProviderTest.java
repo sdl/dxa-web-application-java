@@ -325,6 +325,7 @@ public class GraphQLDynamicNavigationModelProviderTest {
     @Test
     public void serializeToJson() throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
+        mapper.findAndRegisterModules();
 
         mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
         mapper.registerModule(new JodaModule());
@@ -336,10 +337,11 @@ public class GraphQLDynamicNavigationModelProviderTest {
         CommentEdm commentEdm = new CommentEdm();
         commentEdm.setCreationDate(ZonedDateTime.now());
 
-        ObjectWriter ow = mapper.writer();
-
-        String logStr = ow.writeValueAsString(commentEdm);
-        System.err.println(""+logStr);
+        String logStr = mapper.writeValueAsString(commentEdm);
+        assertEquals("{\"Id\":\"0\",\"NamespaceId\":0,\"ItemPublicationId\":0,\"ItemId\":0," +
+                "\"ItemType\":0,\"CreationDate\":\"2021-04-21T11:38:37.449+03:00\"," +
+                "\"Score\":0,\"Status\":0,\"ParentId\":0,\"ChildCount\":0,\"Children\":[]," +
+                "\"Metadata\":{},\"IdLong\":0}", logStr);
 
     }
 }
